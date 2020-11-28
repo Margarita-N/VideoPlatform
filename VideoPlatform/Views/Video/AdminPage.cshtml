@@ -1,0 +1,22 @@
+﻿@model VideoPlatform.Models.VideoDataModel
+
+<h1>Admin page</h1>
+
+
+<form action="/Video/Post" method="post">
+    <p>
+        <label>Title:</label>
+        <input type="text" name="Title" value="@(Model?.Title == null ? "" : Model.Title)" />
+    </p>
+    <p>
+        <label>Description:</label>
+        <input type="text" name="Description" value="@(Model?.Description == null ? "" : Model.Description)" />
+    </p>
+    <p>
+        <label>Video:</label>
+        <input type="text" name="VideoPath" value="@(Model?.VideoPath == null ? "" : Model.Description)"/>
+    </p>
+    <p>
+        <button type="submit">Submit</button>
+    </p>
+</form>

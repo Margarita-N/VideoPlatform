@@ -1,0 +1,59 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    
+*@
+@{ 
+    string relatedVideo = (Convert.ToInt32(ViewBag.id) + 1).ToString();
+}
+
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <style>
+        body {
+            background-color: #0c0c0c;
+        }
+        p{
+            margin:20px;
+            color:lightgray;
+        }
+        .center{
+            display:flex;
+            justify-content:center;
+            margin:0;
+        }
+        .paragraph{
+            font-size:25px;
+            font-weight:bold;
+            margin:20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="center">
+        <div>
+            <video poster="~/thumbnails/@(ViewBag.id)_2.webp" width="640" height=auto controls autoplay>
+                <source src="~/videos/@(ViewBag.id).mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <div style="width:400">
+            <p class="paragraph center">@ViewBag.Title</p>
+            <p class="paragraph center">@ViewBag.Description</p>
+        </div>
+    </div>
+    <div>
+        <div>
+            @for (var i = 0; i < 3; i++)
+            {
+                <p>
+                    <a href="../Video/PlayVideo?id=@(relatedVideo)">
+                        <img src="~/thumbnails/@(relatedVideo)_@(i).webp" />
+                    </a>
+                </p>
+            }
+        </div>
+    </div>
+    
+</body>
+</html>
