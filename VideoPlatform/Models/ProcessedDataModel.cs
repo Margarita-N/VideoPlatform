@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,11 +12,11 @@ namespace VideoPlatform.Models
         public string Description { get; set; }
         public string VideoPath { get; set; }
 
-        //public ProcessedDataModel(string title,string description,string videoFilePath)
-        //{
-        //    this.Title = title;
-        //    this.Description = description;
-        //    this.VideoFilePath = videoFilePath;
-        //}
+        public ProcessedDataModel(string title,string description,string videoPath)
+        {
+            this.Title = title;
+            this.Description = description;
+            this.VideoPath = videoPath;
+        }
     }
 }

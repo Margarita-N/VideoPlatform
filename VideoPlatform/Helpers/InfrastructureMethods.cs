@@ -23,7 +23,7 @@ namespace VideoPlatform.Helpers
             {
                 string thumbnailPath = string.Format("C:/Users/HP/source/repos/VideoPlatform/VideoPlatform/wwwroot/thumbnails/{0}_{1}.webp", id.ToString(), i.ToString());
                 string arguments = string.Format("-ss 4 -i {0} -s {1} -frames:v 1 {2}", videoPath,thumbnailFormats[i],thumbnailPath);
-                ProcessStartInfo psi = new ProcessStartInfo("C:/Users/HP/source/repos/VideoPlatform/VideoPlatform/Helpers/ffmpeg.exe", arguments);
+                ProcessStartInfo psi = new ProcessStartInfo("C:/Users/HP/FFMPEG/ffmpeg.exe", arguments);
                 Process.Start(psi);
             }
              

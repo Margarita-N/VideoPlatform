@@ -43,24 +43,33 @@ namespace VideoPlatform.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post(ProcessedDataModel response)
+        public async Task<IActionResult> Post(VideoDataModel response)
         {
             // rujtja json
             //ProcessedDataModel pdm = new ProcessedDataModel(response.Title,response.Description,response.VideoPath.FileName);
             var currentFile = System.IO.File.ReadAllText("./Data/information.json");
             var resultList = JsonConvert.DeserializeObject<List<ProcessedDataModel>>(currentFile);
+            int size = resultList.Count+1;
+            
 
+            var filePath = String.Format("./wwwroot/videos/{0}.mp4", size);
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await response.VideoPath.CopyToAsync(stream);
+            }
 
-            resultList.Add(response);
+            ProcessedDataModel pdm = new ProcessedDataModel(response.Title, response.Description, filePath);
+            resultList.Add(pdm);
             var convertedJson = JsonConvert.SerializeObject(resultList, Formatting.Indented);
             System.IO.File.WriteAllText("./Data/information.json", convertedJson);
 
             // rujta e file 
-            System.IO.File.Copy(response.VideoPath, "./wwwroot/videos/" + resultList.Count + ".mp4",true);
-            InfrastructureMethods.extractThumbnail(resultList.Count);
-            InfrastructureMethods.extractFrames(resultList.Count);
+            //System.IO.File.Copy(response.VideoPath, "./wwwroot/videos/" + resultList.Count + ".mp4",true);
+            InfrastructureMethods.extractThumbnail(size);
+            InfrastructureMethods.extractFrames(size);
 
             return RedirectToAction(nameof(AdminPage), response);
         }
     }
+
 }

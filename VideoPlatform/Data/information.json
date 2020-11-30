@@ -15,8 +15,8 @@
     "VideoPath": "C:\\Users\\HP\\Downloads\\The Huntsman Short.mp4"
   },
   {
-    "Title": "Thor1",
-    "Description": "Thor Short Video1",
-    "VideoPath": "C:\\Users\\HP\\Downloads\\Thor Short.mp4"
+    "Title": "Sea",
+    "Description": "Sound of sea",
+    "VideoPath": "./wwwroot/videos/4.mp4"
   }
 ]
