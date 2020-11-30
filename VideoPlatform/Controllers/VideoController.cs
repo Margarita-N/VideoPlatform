@@ -22,9 +22,11 @@ namespace VideoPlatform.Controllers
         [HttpGet]
         public IActionResult PlayVideo(string id)
         {
-            ViewBag.id = id;
             var currentFile = System.IO.File.ReadAllText("./Data/information.json");
             var resultList = JsonConvert.DeserializeObject<List<ProcessedDataModel>>(currentFile);
+            
+            ViewBag.id = id;
+            ViewBag.nrOfVideos = resultList.Count;
 
             if(Convert.ToInt32(id) > resultList.Count || Convert.ToInt32(id) <= 0)
             {
@@ -56,6 +58,7 @@ namespace VideoPlatform.Controllers
             // rujta e file 
             System.IO.File.Copy(response.VideoPath, "./wwwroot/videos/" + resultList.Count + ".mp4",true);
             InfrastructureMethods.extractThumbnail(resultList.Count);
+            InfrastructureMethods.extractFrames(resultList.Count);
 
             return RedirectToAction(nameof(AdminPage), response);
         }

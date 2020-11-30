@@ -1,9 +1,9 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-    
+
 *@
-@{ 
-    string relatedVideo = (Convert.ToInt32(ViewBag.id) + 1).ToString();
+@{
+    string relatedVideo = ((Convert.ToInt32(ViewBag.id) % ViewBag.nrOfVideos) + 1).ToString();
 }
 
 <html>
@@ -13,19 +13,22 @@
         body {
             background-color: #0c0c0c;
         }
-        p{
-            margin:20px;
-            color:lightgray;
+
+        p {
+            margin: 20px;
+            color: lightgray;
         }
-        .center{
-            display:flex;
-            justify-content:center;
-            margin:0;
+
+        .center {
+            display: flex;
+            justify-content: center;
+            margin: 0;
         }
-        .paragraph{
-            font-size:25px;
-            font-weight:bold;
-            margin:20px;
+
+        .paragraph {
+            font-size: 25px;
+            font-weight: bold;
+            margin: 20px;
         }
     </style>
 </head>
@@ -54,6 +57,13 @@
             }
         </div>
     </div>
-    
+    <div>
+        @for (var i = 1; i < 9; i++)
+        {
+            <img src="~/frames/@ViewBag.id/@(ViewBag.id)_@(i).png" width="400" height="auto"/>
+        }
+    </div>
+
 </body>
 </html>
+
