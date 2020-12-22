@@ -1,0 +1,87 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0px;
+            padding: 0px;
+        }
+    </style>
+    <script>
+        function writeMessage(canvas, message) {
+            //var context = canvas.getContext('2d');
+            //context.clearRect(0, 0, canvas.width, canvas.height);
+            //context.font = '18pt Calibri';
+            //context.fillStyle = 'black';
+            //context.fillText(message, 10, 25);
+            document.getElementById("myText").innerHTML = message;
+        }
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+        var canvas = document.getElementById('myCanvas');
+        var context = canvas.getContext('2d');
+        var video = document.getElementById('myVideo');
+        var playButton = document.getElementById('playButton');
+        var image = document.getElementById('myImg');
+
+        playButton.addEventListener('click', function (evt) {
+            if (video.paused == true)
+                video.play();
+            else
+                video.pause();
+        }, false);
+
+
+        //canvas.addEventListener('mousemove', function (evt) {
+        //
+        //    document.getElementById('myImg').src = "~/frames/1/1_" + second + ".png";
+        //}, false);
+
+        canvas.addEventListener('click', function (evt) {
+            var duration = video.duration;
+            var mousePos = getMousePos(canvas, evt);
+            var x = mousePos.x;
+
+            video.currentTime = ((x * duration) / 640);
+            video.play();
+        }, false)
+    </script>
+    <script>
+        //provoje me ajax me reload foton
+        $("#myCanvas").hover(function (e) {
+            var duration = video.duration;
+            var mousePos = getMousePos(canvas, evt);
+            var second = parseInt(((mousePos.x * duration) / 640), 10);
+            var message = 'Mouse position: ' + second;
+            writeMessage(canvas, message);
+            console.log(message);
+
+            $.ajax({
+                type: "GET",
+                url: 'Infrastructure/GetImg',
+                data: { Id: id, Second: second },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $("#myImg").attr("src", response);
+                });
+        }
+    </script>
+</head>
+<body>
+    <video id="myVideo">
+        <source src="~/videos/1.mp4" width="640" height=auto />
+    </video>
+    <canvas id="myCanvas" width="578" height="10" style="background-color:darkred"></canvas>
+    <button id="playButton">Play/Pause</button>
+    <p id="myText"></p>
+    <p id="myText1"></p>
+    <img id="myImg" width="100" height=" auto" />
+    
+</body>
+</html>

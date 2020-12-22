@@ -1,70 +1,159 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-*@
+﻿@using VideoPlatform.Helpers
 @{
-    string relatedVideo = ((Convert.ToInt32(ViewBag.id) % ViewBag.nrOfVideos) + 1).ToString();
+    List<int> videosList = InfrastructureMethods.GetVideoIDs();
 }
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+    body {
+        background-color: #0c0c0c;
+    }
+
+    video {
+        border: 1px solid darkgray;
+    }
+
+    .inner-element {
+        position:relative;
+        display: inline-block;
+        margin: 20px;
+        padding: 10px;
+    }
+
+    .paragraph {
+        font-size: 25px;
+        font-weight: bold;
+        color: antiquewhite;
+    }
+
+    #playPauseBtn {
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+        outline: none;
+    }
+
+    #videoDisplay{
+    }
+
+    .imageDisplay{
+        position:absolute;
+        top:300px;
+    }
+
+    .imageDisplay image {
+        position: absolute;
+        margin:-20px;
+    }
+</style>
 
 <html>
 <head>
     <title>@ViewBag.Title</title>
-    <style>
-        body {
-            background-color: #0c0c0c;
-        }
-
-        p {
-            margin: 20px;
-            color: lightgray;
-        }
-
-        .center {
-            display: flex;
-            justify-content: center;
-            margin: 0;
-        }
-
-        .paragraph {
-            font-size: 25px;
-            font-weight: bold;
-            margin: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/style.css" />
 </head>
 <body>
-    <div class="center">
-        <div>
-            <video poster="~/thumbnails/@(ViewBag.id)_2.webp" width="640" height=auto controls autoplay>
-                <source src="~/videos/@(ViewBag.id).mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+    <div id="videoDisplay" class="center">
+        <div class="inner-element">
+            <div>
+                <video id="videoId" poster="~/thumbnails/@(ViewBag.id)_2.webp" width="640" height=auto autoplay>
+                    <source src="~/videos/@(ViewBag.id).mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="imageDisplay">
+                    @for (var i = 1; i <= @ViewBag.Duration; i++)
+                    {
+                        <img id="img@(i)" src="~/frames/@ViewBag.id/@(ViewBag.id)_@(i).png" width="100" height="auto" style="visibility:hidden;margin:-0%;"/>
+                    }
+                </div>
+                <canvas id="filmstripCanvas" width="640" height="10" style="background-color:white"></canvas>
+            </div>
+            <div class="center"><button id="playPauseBtn">>/||</button></div>
+            <p id="seconds" style="color:white"></p>
         </div>
-        <div style="width:400">
-            <p class="paragraph center">@ViewBag.Title</p>
-            <p class="paragraph center">@ViewBag.Description</p>
-        </div>
-    </div>
-    <div>
-        <div>
+        <div class="inner-element">
             <p class="paragraph">Related Videos</p>
-            @for (var i = 0; i < 3; i++)
+            @for (var i = 0; i < videosList.Count; i++)
             {
-                <p>
-                    <a href="../Video/PlayVideo?id=@(relatedVideo)">
-                        <img src="~/thumbnails/@(relatedVideo)_@(i).webp" />
-                    </a>
-                </p>
+                if (!videosList[i].ToString().Equals(ViewBag.id))
+                {
+                    <p>
+                        <a href="../Video/PlayVideo?id=@(videosList[i])">
+                            <img src="~/thumbnails/@(videosList[i])_1.webp" />
+                        </a>
+                    </p>
+                    break;
+                }
             }
         </div>
     </div>
-    <div>
-        @for (var i = 1; i < 9; i++)
-        {
-            <img src="~/frames/@ViewBag.id/@(ViewBag.id)_@(i).png" width="400" height="auto"/>
-        }
+    <div class="center">
+        <div>
+            <div style="width:400">
+                <p class="paragraph center">@ViewBag.Title</p>
+                <p class="paragraph center">@ViewBag.Description</p>
+            </div>
+        </div>
     </div>
 
+    <script>
+        function writeMessage(canvas, message) {
+            document.getElementById("seconds").innerHTML = message;
+        }
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+        var canvas = document.getElementById('filmstripCanvas');
+        var context = canvas.getContext('2d');
+        var video = document.getElementById('videoId');
+        var playButton = document.getElementById('playPauseBtn');
+        var image = document.getElementById('frameImg');
+        var videoDisplay = document.getElementById('videoDisplay');
+
+        playPauseBtn.addEventListener('click', function (evt) {
+            if (video.paused == true) {
+                video.play();
+                playButton.innerHTML = "Pause";
+            }
+            else {
+                video.pause();
+                playButton.innerHTML = "Play";
+            }
+
+        }, false);
+
+
+        canvas.addEventListener('mousemove', function (evt) {
+            var duration = video.duration;
+            var mousePos = getMousePos(canvas, evt);
+            var second = parseInt(((mousePos.x * duration) / canvas.width), 10);
+            var message = parseInt(second / 60) + ":" + second;
+            writeMessage(canvas, message);
+            var imageId = "img" + second;
+
+            @for (var i = 1; i <= @ViewBag.Duration; i++)
+            {
+                @:document.getElementById("img"+@(i)).style.visibility = "hidden";
+            }
+            document.getElementById(imageId).style.visibility = "visible";
+        }, false);
+
+
+        canvas.addEventListener('click', function (evt) {
+            var duration = video.duration;
+            var mousePos = getMousePos(canvas, evt);
+            var x = mousePos.x;
+
+            video.currentTime = ((x * duration) / canvas.width);
+            video.play();
+        }, false)
+
+
+    </script>
 </body>
 </html>
 

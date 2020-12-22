@@ -1,0 +1,22 @@
+﻿@using VideoPlatform.Helpers;
+@{ 
+    List<int> videosList = InfrastructureMethods.GetVideoIDs();
+}
+<html>
+<head>
+    <title>Videos</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<body>
+    <div class="center">
+        @foreach(int id in videosList)
+        {
+            <div>
+                <a href="/Video/PlayVideo?id=@(id)">
+                    <img src="~/thumbnails/@(id)_1.webp" />
+                </a>
+            </div>
+        }
+    </div>
+</body>
+</html>

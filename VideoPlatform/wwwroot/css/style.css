@@ -1,0 +1,20 @@
+﻿body {
+    
+}
+.center{
+    display:flex;
+    justify-content:center;
+    top:100px;
+}
+.center tr{
+    margin:10px;
+}
+p {
+    margin: 20px;
+    color: lightgray;
+}
+
+.wrapper .inner-element{
+    float:left;
+    margin:10px;
+}

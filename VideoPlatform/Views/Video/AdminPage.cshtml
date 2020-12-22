@@ -1,22 +1,67 @@
 ﻿@model VideoPlatform.Models.VideoDataModel
 
-<h1>Admin page</h1>
+<html>
+<head>
+    <title>Insert Video!</title>
+    <link href="~/css/style.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("form").submit(function (event) {
+                event.preventDefault();
 
+                var title = $("#Title").val();
+                var description = $("#Description").val();
 
-<form action="/Video/Post" method="post" enctype="multipart/form-data">
-    <p>
-        <label>Title:</label>
-        <input type="text" name="Title" value="@(Model?.Title == null ? "" : Model.Title)" />
-    </p>
-    <p>
-        <label>Description:</label>
-        <input type="text" name="Description" value="@(Model?.Description == null ? "" : Model.Description)" />
-    </p>
-    <p>
-        <label>Video:</label>
-        <input type="file" asp-for="VideoPath" name="VideoPath"/>
-    </p>
-    <p>
-        <button type="submit">Submit</button>
-    </p>
-</form>
+                if (title && description) {
+                    $(this).unbind('submit').submit();
+                }
+                else {
+                    $("#error-message").html("Please fill all fields!");
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="center">
+        <form action="/Video/Post" method="post" enctype="multipart/form-data">
+            <table>
+                <tr>
+                    <td><label>Title:</label></td>
+                    <td><input type="text" name="Title" id="Title" value="@(Model?.Title == null ? "" : Model.Title)" /></td>
+                </tr>
+                <tr>
+                    <td><label>Description:</label></td>
+                    <td><input type="text" name="Description" id="Description" value="@(Model?.Description == null ? "" : Model.Description)" /></td>
+                </tr>
+                <tr>
+                    <td>Kategoria:</td>
+                    <td><select name="Category">
+                            <option value="Teknologji">Teknologji</option>
+                            <option value="Argetim">Argetim</option>
+                            <option value="Receta">Receta</option>
+                            <option value="Edukative">Edukative</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Video:</label></td>
+                    <td><input type="file" asp-for="VideoPath" name="VideoPath" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="submit" onsubmit="validateForm()">
+                            Submit
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p id="error-message" style="color:red;"></p></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>
+

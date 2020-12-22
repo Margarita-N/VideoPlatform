@@ -1,22 +1,18 @@
 [
   {
+    "id": "1",
     "Title": "Thor",
     "Description": "Thor Short Video",
-    "VideoPath": "C:\\Users\\HP\\Downloads\\Thor Short.mp4"
+    "Category": "Argetim",
+    "VideoPath": "./wwwroot/videos/1.mp4",
+    "Duration": 6
   },
   {
-    "Title": "Sea",
-    "Description": "Sound of sea",
-    "VideoPath": "C:\\Users\\HP\\Downloads\\test_vid.mp4"
-  },
-  {
+    "id": "3",
     "Title": "Huntsman",
     "Description": "Short trailer for upcoming movie",
-    "VideoPath": "C:\\Users\\HP\\Downloads\\The Huntsman Short.mp4"
-  },
-  {
-    "Title": "Sea",
-    "Description": "Sound of sea",
-    "VideoPath": "./wwwroot/videos/4.mp4"
+    "Category": "Argetim",
+    "VideoPath": "./wwwroot/videos/3.mp4",
+    "Duration": 12
   }
 ]

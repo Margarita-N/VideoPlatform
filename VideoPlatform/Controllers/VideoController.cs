@@ -9,6 +9,8 @@ using VideoPlatform.Models;
 using System.IO;
 using System.Web;
 using VideoPlatform.Helpers;
+using Xabe.FFmpeg;
+using System.Reflection;
 
 namespace VideoPlatform.Controllers
 {
@@ -28,17 +30,35 @@ namespace VideoPlatform.Controllers
             ViewBag.id = id;
             ViewBag.nrOfVideos = resultList.Count;
 
-            if(Convert.ToInt32(id) > resultList.Count || Convert.ToInt32(id) <= 0)
+            int index = 0;
+            bool isPresent=false;
+            for(int i = 0; i < resultList.Count; i++)
+            {
+                if (id.Equals(resultList[i].id))
+                {
+                    index = i;
+                    isPresent = true;
+                    break;
+                }
+            }
+
+            if(!isPresent)
             {
                 //there is no such video
                 return View("NotFound");
             }
             else
             {
-                ViewBag.Title = resultList[Convert.ToInt32(id) - 1].Title;
-                ViewBag.Description = resultList[Convert.ToInt32(id) - 1].Description;
+                ViewBag.Title = resultList[index].Title;
+                ViewBag.Description = resultList[index].Description;
+                ViewBag.Duration = resultList[index].Duration;
             }
             
+            return View();
+        }
+
+        public IActionResult Videos()
+        {
             return View();
         }
 
@@ -49,26 +69,44 @@ namespace VideoPlatform.Controllers
             //ProcessedDataModel pdm = new ProcessedDataModel(response.Title,response.Description,response.VideoPath.FileName);
             var currentFile = System.IO.File.ReadAllText("./Data/information.json");
             var resultList = JsonConvert.DeserializeObject<List<ProcessedDataModel>>(currentFile);
-            int size = resultList.Count+1;
-            
 
-            var filePath = String.Format("./wwwroot/videos/{0}.mp4", size);
+            int id;
+            if (resultList.Count != 0)
+                id = Convert.ToInt32(resultList[resultList.Count - 1].id) + 1;
+            else
+            {
+                id = 1;
+            }
+
+            var filePath = String.Format("./wwwroot/videos/{0}.mp4", id);
             using (var stream = System.IO.File.Create(filePath))
             {
                 await response.VideoPath.CopyToAsync(stream);
             }
 
-            ProcessedDataModel pdm = new ProcessedDataModel(response.Title, response.Description, filePath);
+            string dir = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location).Split("bin")[0];
+            string videoPath = string.Format("{0}wwwroot\\videos\\{1}.mp4", dir, id.ToString());
+
+            IMediaInfo mediaInfo = await FFmpeg.GetMediaInfo(videoPath);
+            int videoDuration = (int)Math.Floor(mediaInfo.Duration.TotalSeconds);
+
+            ProcessedDataModel pdm = new ProcessedDataModel(id,response.Title, response.Description, response.Category,filePath,videoDuration);
             resultList.Add(pdm);
             var convertedJson = JsonConvert.SerializeObject(resultList, Formatting.Indented);
             System.IO.File.WriteAllText("./Data/information.json", convertedJson);
 
             // rujta e file 
             //System.IO.File.Copy(response.VideoPath, "./wwwroot/videos/" + resultList.Count + ".mp4",true);
-            InfrastructureMethods.extractThumbnail(size);
-            InfrastructureMethods.extractFrames(size);
+            Extraction.extractThumbnailAsync(id);
+            Extraction.extractFrames(id);
 
             return RedirectToAction(nameof(AdminPage), response);
+        }
+
+        [HttpGet]
+        public string GetImg(ImageDataModel img)
+        {
+            return String.Format("~/wwwroot/frames/{0}/{1}_{2}.png", img.Id, img.Id, img.Second);
         }
     }
 
